@@ -20,14 +20,14 @@ noutbooks
 -name
 -price
 -description
--image
--brend_id 
+-image 
 -model_id
 -category_id
 
 categories
 -id
 -name
+
 
 
 
