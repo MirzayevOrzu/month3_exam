@@ -3,6 +3,7 @@ const config = require("./shared/config");
 const router = require("./routes");
 
 const app = express();
+app.use(express.json())
 app.use("/noute.uz", router);
 
 app.listen(config.port, () => {
