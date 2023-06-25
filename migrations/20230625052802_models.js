@@ -7,11 +7,10 @@ exports.up = function (knex) {
     table.increments("id").primary();
     table.string("name").unique();
     table
-      .integer("brend_id")
+      .integer("brand_id")
       .references("id")
-      .inTable("brends")
+      .inTable("brands")
       .onDelete("CASCADE");
-      table.string('image')
   });
 };
 
