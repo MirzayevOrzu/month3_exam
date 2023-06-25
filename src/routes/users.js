@@ -1,7 +1,7 @@
 const express = require("express");
 const validator = require("../shared/validator");
 const { loginUser } = require("../controllers/users");
-const { loginSchema } = require("../controllers/users/schemas");
+const {loginSchema} = require("../controllers/users/schemas");
 
 const router = express.Router();
 

@@ -1,3 +1,3 @@
-const loginSchema=require('./login-users')
+const {loginSchema}=require('./login-users')
 
-module.exports=loginSchema
+module.exports={loginSchema}
