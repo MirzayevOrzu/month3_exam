@@ -1,5 +1,6 @@
 const express = require("express");
 const db = require("../../db");
+const { BadReqqustError, NotFoundError } = require("../../shared/errors");
 
 /**
  * Brand qo'shish uchun yo'l
@@ -7,7 +8,7 @@ const db = require("../../db");
  * @param {express.Response} res
  * @returns
  */
-const postBrand = async (req, res) => {
+const postBrand = async (req, res, next) => {
   try {
     const { name } = req.body;
 
@@ -17,9 +18,7 @@ const postBrand = async (req, res) => {
       brand,
     });
   } catch (error) {
-    res.status(400).json({
-      mess: error.message,
-    });
+    next(error);
   }
 };
 
@@ -29,7 +28,7 @@ const postBrand = async (req, res) => {
  * @param {express.Response} res
  * @returns
  */
-const getBrands = async (req, res) => {
+const getBrands = async (req, res, next) => {
   try {
     let { order_by = "id", q } = req.query;
     let { limit = 4, offset = 0 } = req.body;
@@ -58,9 +57,7 @@ const getBrands = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(500).json({
-      err: err.message,
-    });
+    next(err);
   }
 };
 
@@ -70,16 +67,14 @@ const getBrands = async (req, res) => {
  * @param {express.Response} res
  * @returns
  */
-const deleteBrand = async (req, res) => {
+const deleteBrand = async (req, res, next) => {
   try {
     const { id } = req.params;
 
     const existing = await db("brands").where({ id }).first();
 
     if (!existing) {
-      return res.status(404).json({
-        error: `${id}-idle brand topilmadi`,
-      });
+      throw new BadReqqustError(` ${id}lik Brand  mavjud emas`);
     }
 
     const deleted = await db("brands")
@@ -91,9 +86,7 @@ const deleteBrand = async (req, res) => {
       deleted: deleted[0],
     });
   } catch (error) {
-    res.status(500).json({
-      error: error.message,
-    });
+    next(error);
   }
 };
 
@@ -111,7 +104,9 @@ const patchBrand = async (req, res) => {
       .where({ id })
       .update(req.body)
       .returning("*");
-
+    if (!updated[0]) {
+      throw new NotFoundError(`${id}lik brand mavjud emas`);
+    }
     res.status(200).json({
       updated: updated[0],
     });
@@ -128,7 +123,7 @@ const patchBrand = async (req, res) => {
  * @param {express.Response} res
  * @returns
  */
-const showBrand = async (req, res) => {
+const showBrand = async (req, res, next) => {
   try {
     const { name } = req.params;
 
@@ -138,9 +133,7 @@ const showBrand = async (req, res) => {
       .first();
 
     if (!brand) {
-      return res.status(404).json({
-        error: "Brand topilmadi.",
-      });
+      throw new BadReqqustError("Brand mavjud emas");
     }
 
     const models = await db("models").where({ brand_id: brand.id });
@@ -164,9 +157,7 @@ const showBrand = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(500).json({
-      err: err.message,
-    });
+    next(err);
   }
 };
 
@@ -176,10 +167,10 @@ const showBrand = async (req, res) => {
  * @param {express.Response} res
  * @returns
  */
-const showBrandModel = async (req, res) => {
+const showBrandModel = async (req, res, next) => {
   try {
     const { brand_name, model_name } = req.params;
-    
+
     const models = await db("models")
       .leftJoin("brands", "models.brand_id", "brands.id")
       .leftJoin("noutbooks", "models.id", "noutbooks.model_id")
@@ -214,13 +205,9 @@ const showBrandModel = async (req, res) => {
       }
     });
 
-    res.status(200).json(
-      ...models
-    );
+    res.status(200).json(...models);
   } catch (err) {
-    res.status(500).json({
-      err: err.message,
-    });
+    next(err);
   }
 };
 
