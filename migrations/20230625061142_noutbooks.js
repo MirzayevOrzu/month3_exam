@@ -14,6 +14,10 @@ exports.up = function(knex) {
     table.string('xotirasi').notNullable();
     table.string('ekran_diagonali');
     table.string('rangi');
+    table.string("images");
+    table.timestamp("created_at").defaultTo(knex.fn.now());
+    table.timestamp("updated_at").defaultTo(knex.fn.now());
+
   })
 };
 

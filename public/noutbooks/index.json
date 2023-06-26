@@ -1,0 +1,12 @@
+{
+    "name": "HP salom2",
+    "price": 1221002,
+    "description":
+      "Zo'r noutbook",
+    "model_id": 1,
+    "category_id": 2,
+    "protsessor": "Intel Core i7-1165G7",
+    "xotirasi": "512GB SSD",
+    "ekran_diagonali": "14 inch",
+    "rangi": "Silver"
+  }
