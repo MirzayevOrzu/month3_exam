@@ -3,6 +3,7 @@ const config = require("../../shared/config");
 const path = require("path");
 const fs = require("fs");
 const db = require("../../db");
+const { BadReqqustError, NotFoundError } = require("../../shared/errors");
 
 /**
  * Modellarni qo'shish uchun yo'l
@@ -10,7 +11,7 @@ const db = require("../../db");
  * @param {express.Response} res
  * @returns
  */
-const postNoutbook = async (req, res) => {
+const postNoutbook = async (req, res,next) => {
   try {
     // if(req.files){
     let elem = req.files.filter((file, index) => {
@@ -87,9 +88,7 @@ const postNoutbook = async (req, res) => {
     //     const {...changes}=req.body
     // }
   } catch (err) {
-    res.status(500).json({
-      err: err.message,
-    });
+    nextTick(err)
   }
 };
 
@@ -99,7 +98,7 @@ const postNoutbook = async (req, res) => {
  * @param {express.Response} res
  * @returns
  */
-const getNoutbooks = async (req, res) => {
+const getNoutbooks = async (req, res,next) => {
   try {
     const noutbooks = await db("noutbooks");
 
@@ -110,13 +109,11 @@ const getNoutbooks = async (req, res) => {
     });
     res.status(200).json(noutbooks);
   } catch (err) {
-    res.status(500).json({
-      err: err.message,
-    });
+   next(err)
   }
 };
 
 module.exports = {
   postNoutbook,
-  getNoutbooks
+  getNoutbooks,
 };
